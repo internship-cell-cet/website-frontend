@@ -1,0 +1,64 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.6.0",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "connected-react-router": "^6.9.1",
+    "env-cmd": "^10.1.0",
+    "history": "^4.10.1",
+    "multiselect-react-dropdown": "^2.0.4",
+    "node-sass": "^8.0.0",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-bootstrap": "^1.6.1",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.1",
+    "react-scripts": "^5.0.1",
+    "react-select-search": "^3.0.8",
+    "redux": "^4.1.0",
+    "styled-components": "^5.3.0",
+    "underscore": "^1.13.1",
+    "web-vitals": "^1.1.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "eslint": "^7.28.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-react": "^7.24.0",
+    "jest": "^26.6.0"
+  },
+  "scripts": {
+    "start": "env-cmd -f .env react-scripts --openssl-legacy-provider start",
+    "build": "env-cmd -f .env react-scripts --openssl-legacy-provider build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint ./"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "description": "Novo-officium job portal using MERN stack.",
+  "main": " webpack-merge, create different webpack config files which read different .env files.",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "ISC"
+}
