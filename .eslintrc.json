@@ -19,7 +19,7 @@
   },
   "plugins": ["react", "jest"],
   "rules": {
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": 0,
     "indent": ["error", 2],
     "import/prefer-default-export": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
