@@ -35,8 +35,8 @@
     "jest": "^26.6.0"
   },
   "scripts": {
-    "build": "env-cmd -f .env react-scripts build --openssl-legacy-provider ",
-    "start": "env-cmd -f .env react-scripts start --openssl-legacy-provider ",
+    "build": "env-cmd -f .env react-scripts --openssl-legacy-provider build",
+    "start": "env-cmd -f .env react-scripts --openssl-legacy-provider start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint ./"
