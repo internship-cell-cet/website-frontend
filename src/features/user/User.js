@@ -20,9 +20,9 @@ const User = () => {
         <Col md={6} className="hidden-sm" ><AuthImage /></Col>
         <Col md={6} sm={12} className="form-card" >
           <Switch>
-            <Route exact path={`${path}/signin`} component={SigninForm} />
-            <Route exact path={`${path}/signup`} component={SignupForm} />
-            <ProtectedRoute exact path={`${path}/register/provider`} type="provider" >
+            <Route exact path={'/user/signin'} component={SigninForm} />
+            <Route exact path={'/user/signup'} component={SignupForm} />
+            <ProtectedRoute exact path={'/user/register/provider'} type="provider" >
               <ProviderRegisterForm />
             </ProtectedRoute>
             <ProtectedRoute exact path={`${path}/register/seeker`} type="seeker" >
