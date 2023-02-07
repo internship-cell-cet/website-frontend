@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Multiselect } from "multiselect-react-dropdown";
 import { push } from "connected-react-router";
@@ -13,7 +13,11 @@ import {
 import { sortBy } from "underscore";
 
 import { StyledSeekerRegister } from "./SeekerRegisterFormStyle";
-import { registerSeeker, imageUpload, resumeUpload } from "../userSlice";
+import userSlice, {
+  registerSeeker,
+  imageUpload,
+  resumeUpload,
+} from "../userSlice";
 import { getSkills } from "../../common/skills/skillSlice";
 import { isValidMobileNumber } from "../../../helpers/utils";
 import {
@@ -25,6 +29,7 @@ import { showAppToast } from "../../../appSlice";
 import { UNKNOWN_ERROR_MSG } from "../../../app/constants";
 import { user } from "../userSelectors";
 import uploadIcon from "../../../assets/images/uploadIcon.png";
+import { ReactReduxContext } from "react-redux";
 
 const validate = ({ mobileNum, dob, image, resume }) => {
   const validateErrors = {};
@@ -34,13 +39,13 @@ const validate = ({ mobileNum, dob, image, resume }) => {
     validateErrors.mobileNum = "Enter a valid mobile number";
   }
 
-  // if (!image) {
-  //   validateErrors.image = "Upload a profile picture";
-  // }
+  if (!image) {
+    validateErrors.image = "Upload a profile picture";
+  }
 
-  // if (!resume) {
-  //   validateErrors.resume = "Upload resume";
-  // }
+  if (!resume) {
+    validateErrors.resume = "Upload resume";
+  }
 
   if (!dob) {
     validateErrors.dob = "Date of Birth is missing";
@@ -64,11 +69,13 @@ const SeekerRegisterForm = () => {
   const [dateFieldType, setDateFieldType] = useState("text");
   const [mobileNum, setMobileNum] = useState("");
   const [error, setError] = useState({});
+  const [id, setid] = useState("");
   const [skillList, setSkillList] = useState([]);
   const [selectedSkillCodes, setSelectedSkillCodes] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [image, setImage] = useState("");
   const [resume, setResume] = useState("");
+  const { store } = useContext(ReactReduxContext);
 
   const dispatch = useDispatch();
   const { firstName } = useSelector(user);
@@ -77,6 +84,7 @@ const SeekerRegisterForm = () => {
 
   useEffect(() => {
     dispatch(getSkills());
+    setid(store.getState().users.user.id);
   }, []);
 
   const skillHandler = (selectedList) => {
@@ -108,8 +116,9 @@ const SeekerRegisterForm = () => {
       skills: selectedSkillCodes,
       image,
       resume,
+      id,
     };
-    console.log(registerInputs);
+    console.log("regiser inputs !!!!!", registerInputs);
     const validatedErrors = validate(registerInputs);
     setError(validatedErrors);
 
