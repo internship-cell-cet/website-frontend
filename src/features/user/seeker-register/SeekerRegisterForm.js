@@ -1,46 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Multiselect } from 'multiselect-react-dropdown';
-import { push } from 'connected-react-router';
-import { Form, Button, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
-import { sortBy } from 'underscore';
+import React, { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Multiselect } from "multiselect-react-dropdown";
+import { push } from "connected-react-router";
+import {
+  Form,
+  Button,
+  Dropdown,
+  DropdownButton,
+  Col,
+  Row,
+} from "react-bootstrap";
+import { sortBy } from "underscore";
 
-import { StyledSeekerRegister } from './SeekerRegisterFormStyle';
-import { registerSeeker, imageUpload, resumeUpload } from '../userSlice';
-import { getSkills } from '../../common/skills/skillSlice';
-import { isValidMobileNumber } from '../../../helpers/utils';
-import { selectSkills, selectIsLoadingSkills } from '../../common/skills/skillSelectors';
-import { StyledBackground } from '../UserStyle';
-import { showAppToast } from '../../../appSlice';
-import { UNKNOWN_ERROR_MSG } from '../../../app/constants';
-import { user } from '../userSelectors';
-import uploadIcon from '../../../assets/images/uploadIcon.png';
+import { StyledSeekerRegister } from "./SeekerRegisterFormStyle";
+import userSlice, {
+  registerSeeker,
+  imageUpload,
+  resumeUpload,
+} from "../userSlice";
+import { getSkills } from "../../common/skills/skillSlice";
+import { isValidMobileNumber } from "../../../helpers/utils";
+import {
+  selectSkills,
+  selectIsLoadingSkills,
+} from "../../common/skills/skillSelectors";
+import { StyledBackground } from "../UserStyle";
+import { showAppToast } from "../../../appSlice";
+import { UNKNOWN_ERROR_MSG } from "../../../app/constants";
+import { user } from "../userSelectors";
+import uploadIcon from "../../../assets/images/uploadIcon.png";
+import { ReactReduxContext } from "react-redux";
 
 const validate = ({ mobileNum, dob, image, resume }) => {
   const validateErrors = {};
   if (!mobileNum) {
-    validateErrors.mobileNum = 'Mobile number is missing';
+    validateErrors.mobileNum = "Mobile number is missing";
   } else if (!isValidMobileNumber(mobileNum)) {
-    validateErrors.mobileNum = 'Enter a valid mobile number';
+    validateErrors.mobileNum = "Enter a valid mobile number";
   }
 
   if (!image) {
-    validateErrors.image = 'Upload a profile picture';
+    validateErrors.image = "Upload a profile picture";
   }
 
   if (!resume) {
-    validateErrors.resume = 'Upload resume';
+    validateErrors.resume = "Upload resume";
   }
 
   if (!dob) {
-    validateErrors.dob = 'Date of Birth is missing';
+    validateErrors.dob = "Date of Birth is missing";
   } else {
     const currentDate = new Date();
     const year16YearsAgo = currentDate.getFullYear() - 16;
-    const dateLimit = new Date(`${year16YearsAgo}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`);
+    const dateLimit = new Date(
+      `${year16YearsAgo}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`
+    );
     const d = new Date(dob);
     if (dateLimit < d) {
-      validateErrors.dob = 'You must be atleast 16';
+      validateErrors.dob = "You must be atleast 16";
     }
   }
 
@@ -49,14 +66,16 @@ const validate = ({ mobileNum, dob, image, resume }) => {
 
 const SeekerRegisterForm = () => {
   const [dob, setDate] = useState();
-  const [dateFieldType, setDateFieldType] = useState('text');
-  const [mobileNum, setMobileNum] = useState('');
+  const [dateFieldType, setDateFieldType] = useState("text");
+  const [mobileNum, setMobileNum] = useState("");
   const [error, setError] = useState({});
+  const [id, setid] = useState("");
   const [skillList, setSkillList] = useState([]);
   const [selectedSkillCodes, setSelectedSkillCodes] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [image, setImage] = useState('');
-  const [resume, setResume] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [image, setImage] = useState("");
+  const [resume, setResume] = useState("");
+  const { store } = useContext(ReactReduxContext);
 
   const dispatch = useDispatch();
   const { firstName } = useSelector(user);
@@ -65,6 +84,7 @@ const SeekerRegisterForm = () => {
 
   useEffect(() => {
     dispatch(getSkills());
+    setid(store.getState().users.user.id);
   }, []);
 
   const skillHandler = (selectedList) => {
@@ -77,20 +97,28 @@ const SeekerRegisterForm = () => {
 
   const handleImage = (e) => {
     const formData = new FormData();
-    formData.append('image', e.target.files[0]);
+    formData.append("image", e.target.files[0]);
     setImage(formData);
   };
 
   const handleResume = (e) => {
     const formData = new FormData();
-    formData.append('resume', e.target.files[0]);
+    formData.append("resume", e.target.files[0]);
     setResume(formData);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const registerInputs = { mobileNum, dob, skills: selectedSkillCodes, image, resume };
+    const registerInputs = {
+      mobileNum,
+      dob,
+      skills: selectedSkillCodes,
+      image,
+      resume,
+      id,
+    };
+    console.log("regiser inputs !!!!!", registerInputs);
     const validatedErrors = validate(registerInputs);
     setError(validatedErrors);
 
@@ -99,17 +127,28 @@ const SeekerRegisterForm = () => {
     }
 
     dispatch(registerSeeker(registerInputs)).then(({ meta, payload }) => {
-      if (meta.requestStatus === 'rejected') {
-        setError({ responseError: (payload && payload.message) || UNKNOWN_ERROR_MSG });
+      if (meta.requestStatus === "rejected") {
+        alert("err rejected");
+        console.log(meta);
+        console.log(payload);
+        setError({
+          responseError: (payload && payload.message) || UNKNOWN_ERROR_MSG,
+        });
       } else {
         dispatch(imageUpload(image))
           .then(() => {
             dispatch(resumeUpload(resume))
               .then(() => {
-                dispatch(push('/seeker/dashboard'));
-                dispatch(showAppToast(`Hello ${firstName}! You have Successfully Registered`));
-              });
-          });
+                dispatch(push("/seeker/dashboard"));
+                dispatch(
+                  showAppToast(
+                    `Hello ${firstName}! You have Successfully Registered`
+                  )
+                );
+              })
+              .catch((err) => console.log("uploadres ", err));
+          })
+          .catch((err) => console.log("uploadimg ", err));
       }
     });
   };
@@ -118,9 +157,10 @@ const SeekerRegisterForm = () => {
     <StyledSeekerRegister>
       <StyledBackground>
         <Form className="registration-details">
-          <div className='register-head-container'><span className = "register-head">Register</span></div>
+          <div className="register-head-container">
+            <span className="register-head">Register</span>
+          </div>
           <div className="register-details">
-
             <Form.Group>
               <Form.Control
                 type="number"
@@ -138,9 +178,9 @@ const SeekerRegisterForm = () => {
               <Form.Control
                 type={dateFieldType}
                 placeholder="Date of Birth"
-                name='dateOfBirth'
-                onFocus={(() => setDateFieldType('date'))}
-                onBlur={(() => setDateFieldType('text'))}
+                name="dateOfBirth"
+                onFocus={() => setDateFieldType("date")}
+                onBlur={() => setDateFieldType("text")}
                 onChange={(e) => setDate(e.target.value)}
                 isInvalid={error.dob}
               />
@@ -150,18 +190,28 @@ const SeekerRegisterForm = () => {
             </Form.Group>
 
             <Form.Group className="skill-section">
-              <DropdownButton id="dropdown-basic-button" title={selectedCategory || 'Skill Category'}>
-                {(!isLoadingSkills && skills) && skills.map((skill) => <Dropdown.Item
-                  key={skill._id}
-                  onClick={(e) => {
-                    const sortedSkillList = sortBy(skill.skills, 'skillName');
-                    setSkillList(sortedSkillList);
-                    setSelectedCategory(e.target.name);
-                  }}
-                  name={skill.category}
-                >
-                  {skill.category}
-                </Dropdown.Item>)}
+              <DropdownButton
+                id="dropdown-basic-button"
+                title={selectedCategory || "Skill Category"}
+              >
+                {!isLoadingSkills &&
+                  skills &&
+                  skills.map((skill) => (
+                    <Dropdown.Item
+                      key={skill._id}
+                      onClick={(e) => {
+                        const sortedSkillList = sortBy(
+                          skill.skills,
+                          "skillName"
+                        );
+                        setSkillList(sortedSkillList);
+                        setSelectedCategory(e.target.name);
+                      }}
+                      name={skill.category}
+                    >
+                      {skill.category}
+                    </Dropdown.Item>
+                  ))}
               </DropdownButton>
             </Form.Group>
 
@@ -180,32 +230,45 @@ const SeekerRegisterForm = () => {
               <Col>
                 <Form.Group className="mb-3">
                   <span className="btn btn-primary btn-file">
-                    <img className='upload-icon' src={uploadIcon}/>
-                    Upload Picture  <input type="file" accept="image/png, image/jpeg" multiple={false} onChange={handleImage} />
+                    <img className="upload-icon" src={uploadIcon} />
+                    Upload Picture{" "}
+                    <input
+                      type="file"
+                      accept="image/png, image/jpeg"
+                      multiple={false}
+                      onChange={handleImage}
+                    />
                   </span>
-                  <div className="invalid-message">
-                    {error.image}
-                  </div>
+                  <div className="invalid-message">{error.image}</div>
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-3">
                   <span className="btn btn-primary btn-file">
-                    <img className='upload-icon' src={uploadIcon}/>
-                    Upload Resume  <input type="file" accept="application/pdf" multiple={false} onChange={handleResume} />
+                    <img className="upload-icon" src={uploadIcon} />
+                    Upload Resume{" "}
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      multiple={false}
+                      onChange={handleResume}
+                    />
                   </span>
-                  <div className="invalid-message">
-                    {error.resume}
-                  </div>
+                  <div className="invalid-message">{error.resume}</div>
                 </Form.Group>
               </Col>
             </Row>
 
             <div className="error">{error.responseError}</div>
-            <Button className='register-button' id="register-button" variant="primary" type="submit" onClick={handleSubmit}>
+            <Button
+              className="register-button"
+              id="register-button"
+              variant="primary"
+              type="submit"
+              onClick={handleSubmit}
+            >
               Register
             </Button>
-
           </div>
         </Form>
       </StyledBackground>

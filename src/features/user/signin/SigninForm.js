@@ -38,14 +38,14 @@ const SigninForm = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-
     const validatedErrors = validateSignin({ email, password });
     setError(validatedErrors);
 
     if (Object.keys(validatedErrors).length !== 0) {
       return;
     }
+
+    event.preventDefault();
 
     dispatch(signin({ email, password })).then(({ meta, payload }) => {
       if (meta.requestStatus === 'rejected') {

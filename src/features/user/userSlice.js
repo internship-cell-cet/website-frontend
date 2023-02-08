@@ -1,10 +1,19 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { signinAPI, signupAPI, providerRegisterAPI, seekerRegisterAPI, checkIsAuthenticatedAPI, imageUploadAPI, resumeUploadAPI, applyJobAPI } from './userAPIs';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  signinAPI,
+  signupAPI,
+  providerRegisterAPI,
+  seekerRegisterAPI,
+  checkIsAuthenticatedAPI,
+  imageUploadAPI,
+  resumeUploadAPI,
+  applyJobAPI,
+} from "./userAPIs";
 
 const initialState = { user: null };
 
 export const signin = createAsyncThunk(
-  'users/signin',
+  "users/signin",
   async (data, thunkAPI) => {
     try {
       const result = await signinAPI(data);
@@ -12,11 +21,11 @@ export const signin = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const signup = createAsyncThunk(
-  'users/signup',
+  "users/signup",
   async (data, thunkAPI) => {
     try {
       const result = await signupAPI(data);
@@ -24,11 +33,11 @@ export const signup = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const registerProvider = createAsyncThunk(
-  'users/providerReg',
+  "users/providerReg",
   async (data, thunkAPI) => {
     try {
       const result = await providerRegisterAPI(data);
@@ -36,47 +45,50 @@ export const registerProvider = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const registerSeeker = createAsyncThunk(
-  'users/seekerReg',
+  "users/seekerReg",
   async (data, thunkAPI) => {
     try {
+      console.log('registerSeeker ',data);
       const result = await seekerRegisterAPI(data);
       return result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const imageUpload = createAsyncThunk(
-  'users/seekerImage',
+  "users/seekerImage",
   async (data, thunkAPI) => {
     try {
       const result = await imageUploadAPI(data);
       return result.data;
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const resumeUpload = createAsyncThunk(
-  'users/seekerResume',
+  "users/seekerResume",
   async (data, thunkAPI) => {
     try {
       const result = await resumeUploadAPI(data);
       return result.data;
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const authenticate = createAsyncThunk(
-  'users/authenticate',
+  "users/authenticate",
   async (thunkAPI) => {
     try {
       const result = await checkIsAuthenticatedAPI();
@@ -84,11 +96,11 @@ export const authenticate = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const applyJob = createAsyncThunk(
-  'users/applyJob',
+  "users/applyJob",
   async (data, thunkAPI) => {
     try {
       const result = await applyJobAPI(data);
@@ -96,11 +108,11 @@ export const applyJob = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  },
+  }
 );
 
 export const userSlice = createSlice({
-  name: 'users',
+  name: "users",
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
